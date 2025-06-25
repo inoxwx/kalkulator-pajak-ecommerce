@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Pajak E-Commerce</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.3rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #hasil {
+      background-color: #fff;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>Kalkulator Pajak E-Commerce</h2>
+  <label>Harga Jual Produk:</label>
+  <input type="number" id="harga" placeholder="Contoh: 100000">
+
+  <label>Pilih Platform:</label>
+  <select id="platform">
+    <option value="shopee">Shopee (Admin 5%)</option>
+    <option value="tokopedia">Tokopedia (Admin 6%)</option>
+    <option value="tiktok">TikTok Shop (Admin 4%)</option>
+  </select>
+
+  <label>Apakah kamu PKP (kena PPN)?</label>
+  <select id="ppn">
+    <option value="ya">Ya</option>
+    <option value="tidak">Tidak</option>
+  </select>
+
+  <label>Apakah kamu UMKM (kena PPh Final 0.5%)?</label>
+  <select id="pph">
+    <option value="ya">Ya</option>
+    <option value="tidak">Tidak</option>
+  </select>
+
+  <button onclick="hitung()">Hitung</button>
+
+  <div id="hasil"></div>
+
+  <script>
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0
+      }).format(angka);
+    }
+
+    function hitung() {
+      const harga = parseFloat(document.getElementById("harga").value);
+      const platform = document.getElementById("platform").value;
+      const isPKP = document.getElementById("ppn").value === "ya";
+      const isUMKM = document.getElementById("pph").value === "ya";
+
+      let adminRate = 0;
+      if (platform === "shopee") adminRate = 0.05;
+      else if (platform === "tokopedia") adminRate = 0.06;
+      else if (platform === "tiktok") adminRate = 0.04;
+
+      const biayaAdmin = harga * adminRate;
+      const ppn = isPKP ? biayaAdmin * 0.11 : 0;
+      const pph = isUMKM ? harga * 0.005 : 0;
+      const labaBersih = harga - biayaAdmin - ppn - pph;
+
+      document.getElementById("hasil").innerHTML = `
+        <p><strong>Biaya Admin (${adminRate * 100}%)</strong>: ${formatRupiah(biayaAdmin)}</p>
+        <p><strong>PPN 11%</strong>: ${formatRupiah(ppn)}</p>
+        <p><strong>PPh Final 0.5%</strong>: ${formatRupiah(pph)}</p>
+        <p><strong>Laba Bersih</strong>: <span style="color:green">${formatRupiah(labaBersih)}</span></p>
+      `;
+    }
+  </script>
+</body>
+</html>
